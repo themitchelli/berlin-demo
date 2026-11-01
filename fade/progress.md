@@ -84,3 +84,10 @@ For blocked stories, use:
   - Start age set to 60 while playing: stopped at Age 60, 1,000,000.
   - Play from 0 for about 31 s: Age 121, 0, 0.0%, and stopped.
   - Real rAF was not exercised: headless --dump-dom fires only one frame (see learned.md).
+
+## 2026-11-01 18:20 - US-003: Survival curve src/chart.mjs - COMPLETE
+
+- src/chart.mjs exports drawChart(canvas, series, currentAge, startAge). Clears and fills a dark background on every call; x axis startAge to 121 with ticks every 20 years (multiples of 20 within range); y axis 0 to 1,000,000 with ticks every 200,000 labelled '200k'; each series a 2px line; 1px vertical line and 6px filled circle at currentAge on the first series. Chart is display only; it reads the survivor array from the engine.
+- src/app.mjs: calls drawChart from render() (so every state change and every frame while playing); syncCanvasSize() sets canvas.width from clientWidth on load and on window resize, then redraws.
+- Files changed: src/chart.mjs, src/app.mjs, fade/prds/FEAT-002-page-chart-and-controls.json (US-003 passes: true), fade/progress.md
+- Tests: no engine code changed. `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 23 / ℹ pass 23 / ℹ fail 0`. Headless Chrome screenshot of http://localhost:8091/ (python3 -m http.server): curve starts top left at age 0 and reaches 0 at 121, ticks and labels render, marker at age 0. Marker movement with age was not screenshotted (headless cannot press Play; rAF limitation in learned.md); it uses the same x mapping as the curve.

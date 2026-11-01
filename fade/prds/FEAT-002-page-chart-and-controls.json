@@ -48,7 +48,7 @@
         "Resizing the window keeps the chart legible (canvas width set from its CSS width on resize, then redrawn)"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     }
   ],
   "technicalNotes": {

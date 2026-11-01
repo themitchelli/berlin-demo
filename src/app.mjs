@@ -3,12 +3,14 @@
 
 import { parseTable } from './engine/table.mjs';
 import { survivors } from './engine/survival.mjs';
+import { drawChart } from './chart.mjs';
 
 const COHORT = 1000000;
 const MIN_START_AGE = 0;
 const MAX_START_AGE = 90;
 const END_AGE = 121; // one past the terminal age 120; survivors here are 0
 const STEP_MS = 250; // time per simulated year while playing
+const CURVE_COLOUR = '#4fc3f7';
 
 const els = {
   sex: document.getElementById('sex'),
@@ -19,6 +21,7 @@ const els = {
   play: document.getElementById('play'),
   pause: document.getElementById('pause'),
   reset: document.getElementById('reset'),
+  chart: document.getElementById('chart'),
 };
 
 let rafId = null;
@@ -58,6 +61,23 @@ function render() {
   els.age.textContent = `Age ${state.currentAge}`;
   els.alive.textContent = Math.round(alive).toLocaleString('en-GB');
   els.pct.textContent = `${((alive / COHORT) * 100).toFixed(1)}%`;
+  drawChart(
+    els.chart,
+    [{ values: state.baseline, colour: CURVE_COLOUR }],
+    state.currentAge,
+    state.startAge,
+  );
+}
+
+// Canvas pixel width follows its CSS width so the chart stays sharp and legible.
+function syncCanvasSize() {
+  const cssWidth = els.chart.clientWidth;
+  if (cssWidth > 0 && els.chart.width !== cssWidth) els.chart.width = cssWidth;
+}
+
+function onResize() {
+  syncCanvasSize();
+  render();
 }
 
 function stopPlaying() {
@@ -123,9 +143,11 @@ async function init() {
     throw new Error(`Could not load data/mortality.csv (HTTP ${response.status})`);
   }
   state.table = parseTable(await response.text());
+  syncCanvasSize();
   onSettingChange();
 }
 
+window.addEventListener('resize', onResize);
 els.sex.addEventListener('change', onSettingChange);
 els.startAge.addEventListener('change', onSettingChange);
 els.play.addEventListener('click', play);
