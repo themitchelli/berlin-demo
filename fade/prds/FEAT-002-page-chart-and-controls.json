@@ -35,7 +35,7 @@
         "Changing startAge to 60 while playing shows 'Age 60' and 1,000,000"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-003",

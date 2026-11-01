@@ -26,3 +26,9 @@ Only add learnings that are:
 
 - **What:** On Node 21 and later, `node --test <dir>` is treated as a file path and fails with MODULE_NOT_FOUND. The runner takes glob patterns. On Node 20 the directory form works.
 - **Why it matters:** Run `node --test tests/*.test.mjs` on Node 21+. Do not mark a story passing on the basis of the directory form failing silently.
+
+## 2026-11-01 - Headless Chrome --dump-dom does not pump requestAnimationFrame
+**Source:** PRD-ID FEAT-002 US-002
+
+- **What:** `chrome --headless=new --dump-dom` with `--virtual-time-budget` fires a requestAnimationFrame callback once and then stops, so any rAF-driven animation looks frozen. Also, `timeout` is not installed on macOS, so `timeout ... chrome` silently produces no output.
+- **Why it matters:** To check rAF-driven behaviour headlessly, test a scratch copy with `window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16)` injected before the module loads. Keep the polyfill out of the committed code. Run the browser checks with a plain command, not `timeout`.

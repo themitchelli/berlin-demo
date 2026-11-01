@@ -7,6 +7,8 @@ import { survivors } from './engine/survival.mjs';
 const COHORT = 1000000;
 const MIN_START_AGE = 0;
 const MAX_START_AGE = 90;
+const END_AGE = 121; // one past the terminal age 120; survivors here are 0
+const STEP_MS = 250; // time per simulated year while playing
 
 const els = {
   sex: document.getElementById('sex'),
@@ -14,7 +16,14 @@ const els = {
   age: document.getElementById('age'),
   alive: document.getElementById('alive'),
   pct: document.getElementById('pct'),
+  play: document.getElementById('play'),
+  pause: document.getElementById('pause'),
+  reset: document.getElementById('reset'),
 };
+
+let rafId = null;
+let lastTs = null;
+let accumulatedMs = 0;
 
 const state = {
   table: null,
@@ -51,7 +60,59 @@ function render() {
   els.pct.textContent = `${((alive / COHORT) * 100).toFixed(1)}%`;
 }
 
+function stopPlaying() {
+  state.playing = false;
+  if (rafId !== null) cancelAnimationFrame(rafId);
+  rafId = null;
+  lastTs = null;
+  accumulatedMs = 0;
+}
+
+// Accumulates real elapsed time and advances one year per STEP_MS.
+// Uses requestAnimationFrame and performance.now(); no setInterval.
+function tick() {
+  rafId = null;
+  if (!state.playing) return;
+
+  const now = performance.now();
+  if (lastTs === null) lastTs = now;
+  accumulatedMs += now - lastTs;
+  lastTs = now;
+
+  while (accumulatedMs >= STEP_MS && state.playing) {
+    accumulatedMs -= STEP_MS;
+    state.currentAge += 1;
+    if (state.currentAge >= END_AGE) {
+      state.currentAge = END_AGE;
+      stopPlaying();
+    }
+  }
+
+  render();
+  if (state.playing) rafId = requestAnimationFrame(tick);
+}
+
+function play() {
+  if (state.playing || state.baseline.length === 0) return;
+  if (state.currentAge >= END_AGE) state.currentAge = state.startAge;
+  state.playing = true;
+  lastTs = null;
+  accumulatedMs = 0;
+  rafId = requestAnimationFrame(tick);
+}
+
+function pause() {
+  stopPlaying();
+}
+
+function reset() {
+  stopPlaying();
+  state.currentAge = state.startAge;
+  render();
+}
+
 function onSettingChange() {
+  stopPlaying();
   recomputeBaseline();
   render();
 }
@@ -67,6 +128,9 @@ async function init() {
 
 els.sex.addEventListener('change', onSettingChange);
 els.startAge.addEventListener('change', onSettingChange);
+els.play.addEventListener('click', play);
+els.pause.addEventListener('click', pause);
+els.reset.addEventListener('click', reset);
 
 init().catch((err) => {
   console.error(err);

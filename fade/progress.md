@@ -74,3 +74,13 @@ For blocked stories, use:
   - DevTools driver (/tmp, not committed): male start 60 -> "Age 60", "1,000,000", "100.0%"; female start 60 -> same; male start 95 -> clamped to "Age 90". No console or exception errors.
   - `grep -n "http://\|https://" index.html src/app.mjs styles.css`: no matches.
   - `node --test tests/*.test.mjs`: `ℹ tests 23 / ℹ pass 23 / ℹ fail 0` (existing engine tests; no engine change).
+
+## 2026-11-01 17:17 - US-002: Play, pause, reset - COMPLETE
+
+- src/app.mjs: play/pause/reset buttons wired. Play runs a requestAnimationFrame loop that accumulates performance.now() deltas and advances one year per 250 ms, stopping when currentAge reaches 121 (survivors there are 0). Pause stops the loop without moving the age. Reset returns to startAge and stops. Changing #sex or #startAge stops playback and then applies the new setting. Pressing Play at the end restarts from startAge. No setInterval.
+- Files changed: src/app.mjs, fade/prds/FEAT-002-page-chart-and-controls.json (US-002 passes: true), fade/progress.md, fade/learned.md
+- Tests: no engine code changed, so no new node test file; `node --test tests/*.test.mjs` not re-run (engine untouched). Browser check in headless Chrome against a scratch copy (/tmp, not committed) in which rAF is polyfilled with setTimeout(16):
+  - 2 s of play: Age 7, 994,552 (about 8 years at 250 ms each). Pause held the age. Resume advanced. Reset: Age 0, 1,000,000.
+  - Start age set to 60 while playing: stopped at Age 60, 1,000,000.
+  - Play from 0 for about 31 s: Age 121, 0, 0.0%, and stopped.
+  - Real rAF was not exercised: headless --dump-dom fires only one frame (see learned.md).
