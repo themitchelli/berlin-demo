@@ -1,0 +1,58 @@
+{
+  "type": "feature",
+  "project": "Million Lives",
+  "id": "FEAT-005",
+  "name": "Cinematic presentation and README",
+  "description": "It is projected on a large screen. Dark theme, large type, an opening title, an always-visible synthetic-data disclaimer, and a README that lets anyone run it in one minute. Polish is last and must not touch src/engine/.",
+  "complexity": "simple",
+  "dependsOn": [
+    "FEAT-003",
+    "FEAT-004"
+  ],
+  "priority": 5,
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Dark cinematic layout in styles.css",
+      "description": "Body background #05070d, text #e8eef7, system font stack (-apple-system, Segoe UI, Roboto, sans-serif). Layout: CSS grid, full viewport height, no page scroll. The particle field canvas fills the left 60% of the width; the right 40% stacks the statistics panel above the chart canvas; controls sit in a bar along the bottom. #age and #alive use font-size clamp(48px, 6vw, 96px) and font-weight 700; #pct and #extra use clamp(24px, 2.5vw, 40px). Buttons are 48px tall with 8px radius, #1c2a3f background, white text.",
+      "complexity": "simple",
+      "acceptanceCriteria": [
+        "At 1920x1080 the #alive figure is at least 64px tall and there are no scrollbars",
+        "At 1280x720 nothing overlaps and every control is clickable",
+        "No external fonts or stylesheets"
+      ],
+      "priority": 1,
+      "passes": true
+    },
+    {
+      "id": "US-002",
+      "title": "Opening title and disclaimer",
+      "description": "Add <div id=title>1,000,000 LIVES</div> positioned over the field canvas, centred, font-size clamp(64px, 10vw, 160px), letter-spacing 0.08em. On Play it transitions opacity to 0 over 600 ms then gets display:none. Reset shows it again. Add <footer id=disclaimer>Synthetic mortality assumptions for illustration only. Not for real actuarial use.</footer> fixed at the bottom, 14px, 70% opacity, always visible.",
+      "complexity": "simple",
+      "acceptanceCriteria": [
+        "The title is visible on load and invisible within 1 second of pressing Play",
+        "Reset brings the title back",
+        "The disclaimer is visible at 1920x1080 and 1280x720"
+      ],
+      "priority": 2,
+      "passes": true
+    },
+    {
+      "id": "US-003",
+      "title": "README.md and ENGINEERING_LOG.md",
+      "description": "Write README.md with these headings in this order: What this is; The maths (the l(x+1) formula, the improvement formula, the terminal-age convention); Run it (python3 -m http.server 8080, then the URL); Test it (node --test); Regenerate the table (node tools/generate-table.mjs, then python3 tools/reference.py); Disclaimer. State in What this is that the particle field is a display of the engine's numbers and introduces no randomness into the calculation. Write ENGINEERING_LOG.md with one entry per PRD FEAT-001 to FEAT-005: date, decisions taken, test command and result, known limitations.",
+      "complexity": "simple",
+      "acceptanceCriteria": [
+        "A new reader can run the app and the tests from README alone",
+        "README contains the sentence about the particle field and the engine",
+        "ENGINEERING_LOG.md has five entries, one per PRD"
+      ],
+      "priority": 3,
+      "passes": true
+    }
+  ],
+  "technicalNotes": {
+    "model": "haiku",
+    "rationale": "CSS, copy and documentation, all specified."
+  }
+}

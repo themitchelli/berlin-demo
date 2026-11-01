@@ -166,3 +166,6 @@ For blocked stories, use:
 - Verified by test: `node --test tests/*.test.mjs`: 29 of 29 passing. Verified by script: `python3 -m http.server` on a scratch port returns 200 for index and data/mortality.csv, so the README run steps work. Count of entries: 5.
 - Not verified: the README run steps were not followed in a browser; browser criteria remain in ENGINEERING_LOG.md under Human checks for a person to check.
 - Files changed: README.md, ENGINEERING_LOG.md, fade/prds/FEAT-005-cinematic-polish-and-readme.json (US-003 passes: true), fade/progress.md
+
+## Model Usage: haiku (complexity: simple, duration: 12m, cost est: $0.00)
+
