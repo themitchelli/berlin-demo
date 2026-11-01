@@ -16,7 +16,7 @@
       "acceptanceCriteria": [
         "node tools/generate-table.mjs exits 0 and data/mortality.csv has exactly 123 lines (comment, header, 121 rows)",
         "Row for age 0 is 0,0.00400000,0.00350000 and row for age 120 is 120,1.00000000,1.00000000",
-        "Row for age 80 male is 0.06196 to 5 decimal places (0.0002 + 0.00003 * exp(7.6))",
+        "Row for age 80 male is 0.06015 to 5 decimal places (0.0002 + 0.00003 * exp(7.6) = 0.0601459)",
         "Running the generator twice gives byte-identical output (check with cmp)",
         "For both sexes q(x) <= q(x+1) for every x from 1 to 119"
       ],

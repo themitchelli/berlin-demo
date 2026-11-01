@@ -1,0 +1,22 @@
+{
+  "repoName": "berlin-demo",
+  "currentPRD": {
+    "id": "FEAT-001",
+    "name": "Synthetic mortality table and survival engine"
+  },
+  "currentStory": {
+    "id": "US-001",
+    "title": "Generate data/mortality.csv"
+  },
+  "iteration": 1,
+  "sessionStartTime": "2026-11-01T17:11:22Z",
+  "model": "haiku",
+  "mode": "ALL",
+  "status": "running",
+  "workQueue": [{"id":"FEAT-001","name":"Synthetic mortality table and survival engine","pending":4,"total":4},{"id":"FEAT-002","name":"Page shell, survival chart and controls","pending":3,"total":3},{"id":"FEAT-003","name":"The million lives particle field","pending":2,"total":2},{"id":"FEAT-004","name":"Mortality improvement scenario","pending":2,"total":2},{"id":"FEAT-005","name":"Cinematic presentation and README","pending":3,"total":3}],
+  "completedThisSession": 0,
+  "archive": [],
+  "testResults": {"totalTests":0,"passed":0,"failed":0,"lastRun":"2026-11-01T17:00:32Z"},
+  "analytics": {"sessions":[],"aggregate":{"today":0,"thisWeek":0,"thisMonth":0,"totalStories":0,"modelUsage":{},"healingEvents":0}},
+  "lastUpdate": "2026-11-01T17:11:22Z"
+}
