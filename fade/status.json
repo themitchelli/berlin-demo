@@ -1,22 +1,22 @@
 {
   "repoName": "berlin-demo",
   "currentPRD": {
-    "id": "FEAT-003",
-    "name": "The million lives particle field"
+    "id": "FEAT-005",
+    "name": "Cinematic presentation and README"
   },
   "currentStory": {
-    "id": "US-002",
-    "title": "Deaths fade, survivors drift, reset restores"
+    "id": "US-003",
+    "title": "README.md and ENGINEERING_LOG.md"
   },
-  "iteration": 6,
-  "sessionStartTime": "2026-11-01T17:15:00Z",
+  "iteration": 5,
+  "sessionStartTime": "2026-11-01T17:21:54Z",
   "model": "haiku",
   "mode": "ALL",
   "status": "running",
-  "workQueue": [{"id":"FEAT-003","name":"The million lives particle field","pending":1,"total":2},{"id":"FEAT-004","name":"Mortality improvement scenario","pending":2,"total":2},{"id":"FEAT-005","name":"Cinematic presentation and README","pending":3,"total":3}],
-  "completedThisSession": 5,
-  "archive": [],
+  "workQueue": [{"id":"FEAT-005","name":"Cinematic presentation and README","pending":1,"total":3}],
+  "completedThisSession": 4,
+  "archive": [{"id":"FEAT-003","name":"The million lives particle field","completedAt":"2026-11-01T17:20:18Z"},{"id":"FEAT-004","name":"Mortality improvement scenario","completedAt":"2026-11-01T17:23:15Z"}],
   "testResults": {"totalTests":0,"passed":0,"failed":0,"lastRun":"2026-11-01T17:00:32Z"},
-  "analytics": {"sessions":[{"date":"2026-11-01","time":"17:11","storyId":"US-001","title":"Generate data/mortality.csv","outcome":"BLOCKED"},{"date":"2026-11-01","time":"17:12","storyId":"US-001","title":"Generate data/mortality.csv","outcome":"COMPLETE"},{"date":"2026-11-01","time":"17:13","storyId":"US-002","title":"Table loader src/engine/table.mjs","outcome":"COMPLETE"},{"date":"2026-11-01","time":"18:00","storyId":"US-003","title":"Survival engine src/engine/survival.mjs","outcome":"COMPLETE"},{"date":"2026-11-01","time":"17:14","storyId":"US-004","title":"Independent reference check tools/reference.py and tests/reference.test.mjs","outcome":"BLOCKED"},{"date":"2026-11-01","time":"19:00","storyId":"US-004","title":"Independent reference check tools/reference.py and tests/reference.test.mjs","outcome":"COMPLETE"},{"date":"2026-11-01","time":"17:17","storyId":"US-002","title":"Play, pause, reset","outcome":"COMPLETE"},{"date":"2026-11-01","time":"18:20","storyId":"US-003","title":"Survival curve src/chart.mjs","outcome":"COMPLETE"}],"aggregate":{"today":8,"thisWeek":8,"thisMonth":8,"totalStories":8,"modelUsage":{},"healingEvents":0}},
-  "lastUpdate": "2026-11-01T17:19:44Z"
+  "analytics": {"sessions":[{"date":"2026-11-01","time":"17:11","storyId":"US-001","title":"Generate data/mortality.csv","outcome":"BLOCKED"},{"date":"2026-11-01","time":"17:12","storyId":"US-001","title":"Generate data/mortality.csv","outcome":"COMPLETE"},{"date":"2026-11-01","time":"17:13","storyId":"US-002","title":"Table loader src/engine/table.mjs","outcome":"COMPLETE"},{"date":"2026-11-01","time":"18:00","storyId":"US-003","title":"Survival engine src/engine/survival.mjs","outcome":"COMPLETE"},{"date":"2026-11-01","time":"17:14","storyId":"US-004","title":"Independent reference check tools/reference.py and tests/reference.test.mjs","outcome":"BLOCKED"},{"date":"2026-11-01","time":"19:00","storyId":"US-004","title":"Independent reference check tools/reference.py and tests/reference.test.mjs","outcome":"COMPLETE"},{"date":"2026-11-01","time":"17:17","storyId":"US-002","title":"Play, pause, reset","outcome":"COMPLETE"},{"date":"2026-11-01","time":"18:20","storyId":"US-003","title":"Survival curve src/chart.mjs","outcome":"COMPLETE"},{"date":"2026-11-01","time":"21:00","storyId":"US-002","title":"Deaths fade, survivors drift, reset restores","outcome":"COMPLETE"},{"date":"2026-11-01","time":"17:27","storyId":"US-002","title":"Opening title and disclaimer","outcome":"COMPLETE"}],"aggregate":{"today":10,"thisWeek":10,"thisMonth":10,"totalStories":10,"modelUsage":{},"healingEvents":0}},
+  "lastUpdate": "2026-11-01T17:27:26Z"
 }

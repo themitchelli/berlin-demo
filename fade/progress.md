@@ -158,3 +158,11 @@ For blocked stories, use:
 - Verified by screenshot (headless Chrome, python3 -m http.server, 1920x1080 and 1280x720 windows): title visible on load and inside the field; disclaimer visible at both sizes; no overlap with stats, chart or controls.
 - Verified by script (scratch copy in /tmp, not committed; Play and Reset clicked by an injected script under --virtual-time-budget): title state at load visible; 1 s after Play hidden=true with class fading; after Reset hidden=false with class cleared.
 - Not verified by eye: the fade itself (opacity over 600 ms) and the title's look on a projector. Headless capture cannot show a transition in progress.
+
+## 2026-11-01 - US-003: README.md and ENGINEERING_LOG.md - COMPLETE
+
+- README.md with the required headings in order: What this is (states that the particle field is a display of the engine's numbers and introduces no randomness into the calculation), The maths, Run it, Test it, Regenerate the table, Disclaimer.
+- ENGINEERING_LOG.md: one entry each for FEAT-001 to FEAT-005 (decisions, test command and result, known limitations), plus the Human checks section kept and extended with FEAT-002, FEAT-003 and FEAT-005 browser criteria.
+- Verified by test: `node --test tests/*.test.mjs`: 29 of 29 passing. Verified by script: `python3 -m http.server` on a scratch port returns 200 for index and data/mortality.csv, so the README run steps work. Count of entries: 5.
+- Not verified: the README run steps were not followed in a browser; browser criteria remain in ENGINEERING_LOG.md under Human checks for a person to check.
+- Files changed: README.md, ENGINEERING_LOG.md, fade/prds/FEAT-005-cinematic-polish-and-readme.json (US-003 passes: true), fade/progress.md
