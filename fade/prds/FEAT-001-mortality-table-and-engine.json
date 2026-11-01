@@ -67,7 +67,7 @@
         "Nothing in data/reference.json or tools/reference.py is edited after the Python script first writes it; if the JS disagrees, fix the JS"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     }
   ],
   "technicalNotes": {

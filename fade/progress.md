@@ -56,3 +56,11 @@ For blocked stories, use:
 - Blocking discrepancy: acceptance criterion 2 says "Male 30 is above 990000". The reference computes male l(30) = 985423.99, and the spec formula gives the same value by hand: cumulative hazard over ages 0..29 is about 0.0147 (0.004 at age 0, about 0.0058 from the 0.0002 floor, about 0.0049 from the B*exp(C*x) term), so S = exp(-0.0147) is about 0.9854. The bound is an arithmetic error in the PRD, like the age-80 one in US-001. It cannot be met without changing the formula or the constants.
 - Not changed: the sanity bound (I did not loosen it to pass), data/reference.json, tools/reference.py. Story left passes: false.
 - Suggested resolution: a human decides. Most likely the bound should read about 980000 (for example "above 980000"). Once changed in the PRD, rerun `python3 tools/reference.py` only if the CSV changes (the reference is off-limits to hand-edit), then rerun `node --test tests/*.test.mjs` and mark US-004 passes.
+
+## 2026-11-01 19:00 - US-004: Independent reference check tools/reference.py and tests/reference.test.mjs - COMPLETE
+
+- Re-ran the story after the human correction of the male age-30 sanity bound to "above 980000" (commit c8d843d). The earlier 990000 bound was an arithmetic error in the PRD, not an engine defect.
+- Re-ran `python3 -I tools/reference.py`: exit 0, output identical to the committed data/reference.json (git diff empty). The reference file was not hand-edited.
+- Sanity bounds: male 30 = 985423.99 (> 980000); male 110 = 0.068 (< 1000). Eight numbers present.
+- Files changed: fade/prds/FEAT-001-mortality-table-and-engine.json (US-004 passes: true), fade/progress.md
+- Tests: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 23 / ℹ pass 23 / ℹ fail 0`. All eight reference comparisons pass under tolerance 0.5.
