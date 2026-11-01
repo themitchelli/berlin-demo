@@ -99,3 +99,10 @@ For blocked stories, use:
 - index.html: added <canvas id="field" width="800" height="300">.
 - Files changed: src/particles.mjs, tests/particles.test.mjs, src/app.mjs, index.html, fade/prds/FEAT-003-particle-field.json (US-001 passes: true), fade/progress.md
 - Tests: added 4 tests in tests/particles.test.mjs (visibleCount's three PRD assertions; update keeps exactly aliveCount alive from the end; 400 ms fade; aliveCount clamped). `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 27 / ℹ pass 27 / ℹ fail 0`. Math.random appears only in createField (grep). Headless Chrome load of http://localhost:8093/: #age "Age 0", #alive "1,000,000", no uncaught errors. Not verified: visual "all visible at 0 / none at 121" and the 50 fps devtools criterion (need a real browser with a rAF-driven session; headless does not pump rAF, see learned.md).
+
+## 2026-11-01 21:00 - US-002: Deaths fade, survivors drift, reset restores - COMPLETE
+
+- src/particles.mjs: new pure export drawRadius(p) = r * (0.6 + 0.4 * fade), so dying particles shrink to 60% of radius over the same 400 ms as the alpha fade; draw uses it. Drift and fade logic unchanged. Reset needs no new code: reset calls render(), and the fieldFrame loop calls update with the restored aliveCount, which sets every alive particle to fade 1 on that frame. Pause keeps fieldFrame running, so living particles keep drifting.
+- Files changed: src/particles.mjs, tests/particles.test.mjs, fade/prds/FEAT-003-particle-field.json (US-002 passes: true), fade/progress.md
+- Tests: added 2 tests (radius shrink to 0.8r at fade 0.5 and 0.6r at fade 0, full radius for living; restore to aliveCount=all sets every particle alive with fade 1 in one update). `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`.
+- Not verified in a browser: the three browser criteria (field thinning between ages 75 and 100 while playing from 60, reset visible within one frame, pause with drift). Headless Chrome does not pump requestAnimationFrame (see learned.md), so these rest on the code path above, not an observed run.

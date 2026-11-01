@@ -12,9 +12,16 @@ const GLOW_COLOUR = '#7dd3fc';
 const PARTICLE_COLOUR = '#e0f2fe';
 const RADIUS_MIN = 1.5;
 const RADIUS_MAX = 3;
+const DEAD_RADIUS_SCALE = 0.6; // a fully faded particle is drawn at 60% of its radius
 
 export function visibleCount(lx, l0, total = 1000) {
   return Math.round((total * lx) / l0);
+}
+
+// Living particles keep their radius. Dying ones shrink towards DEAD_RADIUS_SCALE as fade goes 1 -> 0,
+// over the same FADE_MS as the alpha fade.
+export function drawRadius(p) {
+  return p.r * (DEAD_RADIUS_SCALE + (1 - DEAD_RADIUS_SCALE) * p.fade);
 }
 
 export function createField(canvas, total = 1000) {
@@ -68,7 +75,7 @@ export function update(field, aliveCount, dtMs) {
     if (p.fade <= 0) continue;
     ctx.globalAlpha = p.fade;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, drawRadius(p), 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.globalAlpha = 1;

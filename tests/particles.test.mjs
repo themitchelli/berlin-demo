@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { visibleCount, update } from '../src/particles.mjs';
+import { visibleCount, update, drawRadius } from '../src/particles.mjs';
 
 test('visibleCount maps the engine count onto 1,000 particles', () => {
   assert.equal(visibleCount(1000000, 1000000), 1000);
@@ -39,6 +39,26 @@ test('dead particles fade over 400 ms and reach zero', () => {
   update(field, 2, 400);
   assert.equal(field.particles[3].fade, 0);
   assert.equal(field.particles[0].fade, 1);
+});
+
+test('dead particles shrink to 60% of radius as they fade; living ones keep full radius', () => {
+  const field = stubField(2);
+  field.particles.forEach((p) => (p.r = 2));
+  update(field, 1, 0);
+  assert.equal(drawRadius(field.particles[0]), 2);
+  update(field, 1, 200);
+  assert.ok(Math.abs(drawRadius(field.particles[1]) - 2 * 0.8) < 1e-9);
+  update(field, 1, 200);
+  assert.ok(Math.abs(drawRadius(field.particles[1]) - 2 * 0.6) < 1e-9);
+  assert.equal(drawRadius(field.particles[0]), 2);
+});
+
+test('reset-style restore: aliveCount back to full sets every particle alive with fade 1 in one update', () => {
+  const field = stubField(4);
+  update(field, 0, 400);
+  assert.ok(field.particles.every((p) => p.fade === 0 && !p.alive));
+  update(field, 4, 16);
+  assert.ok(field.particles.every((p) => p.alive && p.fade === 1));
 });
 
 test('aliveCount is clamped to the particle count', () => {

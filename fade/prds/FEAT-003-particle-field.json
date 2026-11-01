@@ -35,7 +35,7 @@
         "Pause: the age stops changing and the particles keep drifting"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     }
   ],
   "technicalNotes": {
