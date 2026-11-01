@@ -109,10 +109,14 @@ function render() {
   drawChart(els.chart, series, state.currentAge, state.startAge);
 }
 
-// Canvas pixel width follows its CSS width so the chart stays sharp and legible.
-function syncCanvasSize() {
-  const cssWidth = els.chart.clientWidth;
-  if (cssWidth > 0 && els.chart.width !== cssWidth) els.chart.width = cssWidth;
+// Canvas pixel size follows its CSS box so drawing stays sharp at any projector resolution.
+function syncCanvasSize(canvas) {
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  if (w > 0 && h > 0) {
+    if (canvas.width !== w) canvas.width = w;
+    if (canvas.height !== h) canvas.height = h;
+  }
 }
 
 // Runs for the life of the page, playing or not. It only draws the engine's current
@@ -128,9 +132,12 @@ function fieldFrame(ts) {
   requestAnimationFrame(fieldFrame);
 }
 
+// Rebuilding the field on resize places the particles inside the new canvas bounds.
 function onResize() {
-  syncCanvasSize();
-  render();
+  syncCanvasSize(els.chart);
+  syncCanvasSize(els.field);
+  field = createField(els.field, PARTICLES);
+  if (state.baseline.length > 0) render();
 }
 
 function stopPlaying() {
@@ -199,7 +206,8 @@ async function init() {
   // Browsers may restore a slider position on reload; the state must follow the control.
   state.improvement = Number(els.improvement.value) / 100;
   els.improvementValue.textContent = `${els.improvement.value}%`;
-  syncCanvasSize();
+  syncCanvasSize(els.chart);
+  syncCanvasSize(els.field);
   onSettingChange();
   field = createField(els.field, PARTICLES);
   requestAnimationFrame(fieldFrame);

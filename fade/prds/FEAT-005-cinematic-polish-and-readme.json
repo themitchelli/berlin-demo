@@ -22,7 +22,7 @@
         "No external fonts or stylesheets"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-002",

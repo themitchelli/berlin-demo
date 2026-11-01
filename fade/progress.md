@@ -132,3 +132,17 @@ For blocked stories, use:
 - Files changed: index.html, src/app.mjs, fade/prds/FEAT-004-scenario-comparison.json (US-002 passes: true), ENGINEERING_LOG.md, fade/progress.md
 - Tests: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. `node --check src/app.mjs` passes. Engine check (scratch script in /tmp): male, 10%, age 85 gives improved 403417.19 minus baseline 363826.91, so +39,590; age 0 gives +0.
 - Browser: headless --dump-dom of a scratch copy in /tmp with the slider value set to 10 shows #aliveImproved "1,000,000" and #extra "+0" at age 0. Not verified in a browser: the age-85 displayed value and per-frame updating while playing (headless does not pump rAF, see learned.md). Those are in ENGINEERING_LOG.md under Human checks.
+
+## 2026-11-01 17:25 - US-001 (FEAT-005): Dark cinematic layout in styles.css - COMPLETE
+
+- styles.css rewritten: #05070d background, #e8eef7 text, system font stack, no network fonts. CSS grid stage, full viewport height, overflow hidden. Field canvas in the left 60%; stats panel above the chart in the right 40%; controls bar along the bottom. #age and #alive clamp(48px, 6vw, 96px) weight 700; #pct and #extra clamp(24px, 2.5vw, 40px). Buttons 48px tall, 8px radius, #1c2a3f background, white text.
+- index.html: same ids as before, regrouped into .stage > .field, .side (h1, stats, legend, chart), .controls.
+- src/app.mjs: syncCanvasSize(canvas) now sizes both canvases from their CSS box (was chart width only). Resize rebuilds the particle field so particles fall inside the new bounds; render() on resize only after the table has loaded.
+- Files changed: styles.css, index.html, src/app.mjs, fade/prds/FEAT-005-cinematic-polish-and-readme.json (US-001 passes: true), fade/progress.md
+- Tests: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. `node --check src/app.mjs` passes. No engine change.
+- Verified by measurement and screenshot (headless Chrome, scratch copy in /tmp/layoutcheck, not committed; served with python3 -m http.server):
+  - 1920x1080 window: #alive computed font 96px (rect 101px tall); no vertical or horizontal overflow; all controls hit-test as clickable.
+  - 1280x720 window: #alive 76.8px; no overflow; every control (sex, start age, Play, Pause, Reset, improvement slider) is clickable at its centre; no overlap.
+  - Caveat: the headless window includes browser chrome, so the page viewport measured 993px tall at the 1920x1080 window and 633px at 1280x720. The layout was checked at these smaller heights, not at exactly 1080 and 720.
+  - No http(s) or external stylesheet references in index.html, styles.css, src/app.mjs (only the local styles.css link).
+- Not verified: the visual result on a real projector or a real browser window at exact 1920x1080 / 1280x720 viewports.

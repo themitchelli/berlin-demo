@@ -7,8 +7,33 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <h1>The Million Lives Experiment</h1>
+  <div class="stage">
+    <div class="field fill">
+      <canvas id="field"></canvas>
+    </div>
+
+    <aside class="side">
+      <h1>The Million Lives Experiment</h1>
+
+      <section class="stats">
+        <div id="age">Age 0</div>
+        <div id="alive">1,000,000</div>
+        <div class="stats-row">
+          <span id="pct">100.0%</span>
+          <span class="stat">Improved survivors <span id="aliveImproved">—</span></span>
+          <span class="stat">Extra survivors <span id="extra">—</span></span>
+        </div>
+      </section>
+
+      <div id="legend" class="legend" hidden>
+        <span><i class="swatch" style="background:#7fd1ff"></i>Baseline</span>
+        <span><i class="swatch" style="background:#ffb347"></i>Improved</span>
+      </div>
+
+      <div class="chart fill">
+        <canvas id="chart"></canvas>
+      </div>
+    </aside>
 
     <section class="controls">
       <label>Sex
@@ -25,23 +50,7 @@
       <button id="reset" type="button">Reset</button>
       <label>Mortality improvement <input type="range" id="improvement" min="0" max="30" step="1" value="0"> <span id="improvementValue">0%</span></label>
     </section>
-
-    <div id="legend" class="legend" hidden>
-      <span><i class="swatch" style="background:#7fd1ff"></i>Baseline</span>
-      <span><i class="swatch" style="background:#ffb347"></i>Improved</span>
-    </div>
-
-    <section class="stats">
-      <div id="age">Age 0</div>
-      <div id="alive">1,000,000</div>
-      <div id="pct">100.0%</div>
-      <div>Improved survivors <span id="aliveImproved">—</span></div>
-      <div>Extra survivors <span id="extra">—</span></div>
-    </section>
-
-    <canvas id="field" width="800" height="300"></canvas>
-    <canvas id="chart" width="800" height="400"></canvas>
-  </main>
+  </div>
   <script type="module" src="src/app.mjs"></script>
 </body>
 </html>
