@@ -42,3 +42,9 @@ For blocked stories, use:
 - Implemented parseTable(csvText) as a pure module: skips # comment lines and the header, returns { male, female } as Float64Array(121). Throws `Missing age N`, `Duplicate age N`, `Rate out of range at age N` per the PRD. No DOM, fetch or fs in src/engine/.
 - Files changed: src/engine/table.mjs, tests/table.test.mjs, fade/prds/FEAT-001-mortality-table-and-engine.json (US-002 passes: true), fade/progress.md, fade/learned.md
 - Tests: added 5 tests in tests/table.test.mjs (real CSV loads with length 121 and male[0]=0.004; Missing age 50; age 10 male 1.2 rejected; duplicate row; negative rate). Ran `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 5 / ℹ pass 5 / ℹ fail 0`. `node --test tests/` as written in FADE.md errors on Node 21+ (see learned.md).
+
+## 2026-11-01 18:00 - US-003: Survival engine src/engine/survival.mjs - COMPLETE
+
+- Implemented survivors(cohort, qx, startAge) (lx[0] = cohort, lx[i+1] = lx[i] * (1 - q(startAge+i)) through age 120, final element age 121; length 121 - startAge + 1; no rounding) and applyImprovement(qx, pct) (returns a new array of (1 - pct) * q; throws 'pct must be between 0 and 0.3' outside [0, 0.3]). Terminal age convention noted in the module comment.
+- Files changed: src/engine/survival.mjs, tests/survival.test.mjs, fade/prds/FEAT-001-mortality-table-and-engine.json (US-003 passes: true), fade/progress.md
+- Tests: added 9 tests in tests/survival.test.mjs covering the length/last-element/monotonic checks, q(120)=1 and q(30)=1 copies, applyImprovement 0.9 factor at age 80, improved >= baseline, non-mutation, and both out-of-range throws. Ran `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 14 / ℹ pass 14 / ℹ fail 0`. The directory form `node --test tests/` is not used because of the Node 21+ issue in learned.md.

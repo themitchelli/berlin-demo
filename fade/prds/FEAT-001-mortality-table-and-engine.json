@@ -53,7 +53,7 @@
         "All of the above live in tests/survival.test.mjs and node --test tests/ passes"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-004",
