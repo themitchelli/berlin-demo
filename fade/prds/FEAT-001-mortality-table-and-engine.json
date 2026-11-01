@@ -21,7 +21,7 @@
         "For both sexes q(x) <= q(x+1) for every x from 1 to 119"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-002",

@@ -30,3 +30,9 @@ For blocked stories, use:
 - Verified: 123 lines (comment, header, 121 rows); row 0 is 0.00400000 / 0.00350000; row 120 is 1.00000000 / 1.00000000; two runs are byte-identical (cmp); q(x) is non-decreasing for x=1..119 for both sexes.
 - Blocking discrepancy: the acceptance criterion says male age 80 should be 0.06196 "(0.0002 + 0.00003 * exp(7.6))", but that expression evaluates to 0.06014588. The formula and the number cannot both hold. Story left passes: false.
 - Suggested resolution: a human decides whether the constants (e.g. B or C) or the expected value 0.06196 is the intended one. Once decided, update the PRD text, regenerate the CSV, and rerun the checks. data/reference.json is not yet created (US-004), so no off-limits file was touched.
+
+## 2026-11-01 17:12 - US-001: Generate data/mortality.csv - COMPLETE
+
+- Generator tools/generate-table.mjs already matched the corrected PRD (age-80 male expected 0.06015; formula gives 0.06014588). Verified without changes to code or data.
+- Files changed: fade/prds/FEAT-001-mortality-table-and-engine.json (US-001 passes: true), fade/progress.md
+- Tests: all five acceptance criteria checked by hand: 123 lines; age 0 row 0.00400000/0.00350000; age 120 row 1.00000000/1.00000000; age 80 male 0.06014588; two runs byte-identical (cmp); q(x) <= q(x+1) for x=1..119 for both sexes (0 violations). No automated test file exists yet for this story (node --test tests/ is US-002's scope).
