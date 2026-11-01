@@ -3,19 +3,22 @@
   "project": "Million Lives",
   "id": "FEAT-004",
   "name": "Mortality improvement scenario",
-  "description": "A slider from 0% to 30% applies a relative reduction to every annual mortality rate. The chart shows baseline and improved curves together and the statistics show the extra survivors at the current age. Changes take effect at once, mid-play.",
+  "description": "A slider from 0 to 30 applies a relative reduction of that many percent to every annual mortality rate, using applyImprovement from the engine. The chart shows baseline and improved together and the statistics show the extra survivors at the current age. Changes apply at once, even mid-play.",
   "complexity": "simple",
-  "dependsOn": ["FEAT-002"],
+  "dependsOn": [
+    "FEAT-002"
+  ],
   "priority": 4,
   "userStories": [
     {
       "id": "US-001",
-      "title": "Improvement slider and second curve",
-      "description": "A range input labelled 'Mortality improvement' (0 to 30, step 1, default 0) recomputes the improved survivor array using applyImprovement and draws it on the chart in a second, clearly different colour with a legend.",
+      "title": "Slider and second curve",
+      "description": "Add to index.html: <label>Mortality improvement <input type=range id=improvement min=0 max=30 step=1 value=0> <span id=improvementValue>0%</span></label>. In app.mjs, on input: state.improvement = value / 100, state.improved = survivors(1000000, applyImprovement(table[sex], state.improvement), startAge), update #improvementValue, redraw. Pass two series to drawChart: baseline colour #7fd1ff, improved colour #ffb347. When improvement is 0 pass only the baseline series. Add a small legend element #legend showing the two colours and labels Baseline and Improved, hidden when improvement is 0.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "At 0% the two curves coincide and only one is visibly drawn",
-        "At 30% the improved curve sits above the baseline at every age between the start and 120",
-        "Moving the slider while playing updates the curve on the next frame without resetting the age"
+        "At 0 only one curve is drawn and the legend is hidden",
+        "At 30 the orange curve sits above the blue one at every age between startAge and 120",
+        "Moving the slider while playing changes the curve without changing #age"
       ],
       "priority": 1,
       "passes": false
@@ -23,11 +26,12 @@
     {
       "id": "US-002",
       "title": "Extra survivors statistic",
-      "description": "The statistics panel shows the improved surviving population and the difference from baseline at the current age, formatted with thousands separators and a plus sign.",
+      "description": "Add elements #aliveImproved and #extra to the statistics panel. Each render: #aliveImproved shows improved[currentAge - startAge] rounded with toLocaleString('en-GB'); #extra shows the rounded difference improved minus baseline, prefixed with '+', e.g. '+12,345'. Both read '—' when improvement is 0.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "At age 0 the difference is '+0'",
-        "At age 85, 10% improvement, male, the difference equals improved[85] - baseline[85] from the engine, rounded",
-        "The difference updates every frame while playing"
+        "At age 0 #extra shows '+0' when improvement is above 0",
+        "At age 85, male, 10%: #extra equals Math.round(improved[85] - baseline[85]) from the engine (check in the console)",
+        "#extra updates every frame while playing"
       ],
       "priority": 2,
       "passes": false
@@ -35,6 +39,6 @@
   ],
   "technicalNotes": {
     "model": "haiku",
-    "rationale": "Wiring an existing engine function to a slider and the existing chart."
+    "rationale": "Wires an existing engine function to a slider and the existing chart."
   }
 }

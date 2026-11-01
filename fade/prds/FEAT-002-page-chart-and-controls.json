@@ -3,19 +3,22 @@
   "project": "Million Lives",
   "id": "FEAT-002",
   "name": "Page shell, survival chart and controls",
-  "description": "A static page that loads the table, runs the engine once, and plays the cohort forward year by year with a survival curve and live statistics. No particles yet. End-to-end working before anything pretty.",
+  "description": "A static page that loads the table, runs the engine once per setting change, and plays the cohort forward one year at a time with a survival curve and live statistics. Files: index.html, src/app.mjs, src/chart.mjs, styles.css. No particles yet. Everything local, no CDN.",
   "complexity": "medium",
-  "dependsOn": ["FEAT-001"],
+  "dependsOn": [
+    "FEAT-001"
+  ],
   "priority": 2,
   "userStories": [
     {
       "id": "US-001",
-      "title": "Page loads the table and shows starting statistics",
-      "description": "index.html plus src/app.mjs fetch data/mortality.csv, parse it, and show: current age, surviving population (formatted with thousands separators), and percentage surviving, for a cohort of 1,000,000 at the chosen starting age.",
+      "title": "index.html and src/app.mjs show the starting figures",
+      "description": "Create index.html that links styles.css and loads <script type=module src=src/app.mjs>. It contains: <select id=sex> with options male (selected) and female; <input type=number id=startAge min=0 max=90 value=0>; buttons #play #pause #reset; <canvas id=chart width=800 height=400>; and three elements #age #alive #pct. src/app.mjs fetches data/mortality.csv, calls parseTable, keeps one state object { table, sex, startAge, improvement:0, currentAge, playing:false, baseline:[], }, computes baseline = survivors(1000000, table[sex], startAge), and renders: #age shows `Age ${currentAge}`, #alive shows survivors at currentAge with toLocaleString('en-GB'), #pct shows one decimal place followed by %.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "Opening http://localhost:8080/ shows 'Age 0', '1,000,000' and '100.0%' with no console errors",
-        "A starting-age control (0 to 90, default 0) and a sex toggle (male/female, default male) change the figures immediately without playing",
-        "All script and style files are local; nothing is fetched from the network"
+        "python3 -m http.server 8080 then http://localhost:8080/ shows 'Age 0', '1,000,000' and '100.0%' with no console errors",
+        "Changing #sex or #startAge recomputes baseline and updates the three figures immediately",
+        "View source shows no http:// or https:// URLs"
       ],
       "priority": 1,
       "passes": false
@@ -23,30 +26,33 @@
     {
       "id": "US-002",
       "title": "Play, pause, reset",
-      "description": "Play advances the current age by one year every 250 ms using requestAnimationFrame and elapsed time (not setInterval), pause stops it, reset returns to the starting age. Reaching 121 stops automatically.",
+      "description": "In src/app.mjs: #play sets playing=true and starts a requestAnimationFrame loop; every 250 ms of elapsed time (accumulate performance.now() deltas, do not use setInterval) currentAge increases by 1 until it reaches 121, where playing becomes false. #pause sets playing=false. #reset sets currentAge=startAge and playing=false. Changing #sex or #startAge while playing behaves like reset then applies the new setting.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "Play from age 0 reaches age 121 in roughly 30 seconds and stops with 0 survivors shown",
-        "Pause freezes the age and figures; Play resumes from the same age; Reset returns to the starting age and 1,000,000",
-        "Changing starting age or sex while playing resets to the new starting age"
+        "Play from 0 reaches 'Age 121' and '0' survivors in about 30 seconds and stops",
+        "Pause then Play resumes from the same age",
+        "Reset returns to the starting age with 1,000,000 shown",
+        "Changing startAge to 60 while playing shows 'Age 60' and 1,000,000"
       ],
       "priority": 2,
       "passes": false
     },
     {
       "id": "US-003",
-      "title": "Survival curve on canvas",
-      "description": "src/chart.mjs draws lx against age on a canvas: axes with labelled ticks (age every 20 years, survivors every 200,000), the baseline curve, and a vertical marker plus a dot at the current age that moves as the simulation plays.",
+      "title": "Survival curve src/chart.mjs",
+      "description": "Create src/chart.mjs exporting drawChart(canvas, series, currentAge, startAge). series is an array of { values, colour } where values is an lx array starting at startAge. Draw: dark background, x axis age from startAge to 121 with a tick and label every 20 years, y axis from 0 to 1,000,000 with a tick and label every 200,000 written as '200k', each series as a 2px line, and a 1px vertical line plus a 6px filled circle at currentAge on the first series. Clear the canvas at the start of every call. app.mjs calls drawChart on every state change and every frame while playing.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "The curve starts at the cohort size at the starting age and reaches 0 at 121",
-        "The marker's x position matches the current age shown in the statistics",
-        "The chart redraws correctly when the window is resized"
+        "The curve starts at the top left at startAge and reaches 0 at 121 on the right",
+        "The marker x position moves right as the age increases and matches #age",
+        "Resizing the window keeps the chart legible (canvas width set from its CSS width on resize, then redrawn)"
       ],
       "priority": 3,
       "passes": false
     }
   ],
   "technicalNotes": {
-    "model": "sonnet",
-    "rationale": "Straightforward DOM and canvas work on top of a tested engine."
+    "model": "haiku",
+    "rationale": "DOM wiring and canvas drawing, fully specified."
   }
 }

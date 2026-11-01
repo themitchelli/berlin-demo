@@ -3,66 +3,75 @@
   "project": "Million Lives",
   "id": "FEAT-001",
   "name": "Synthetic mortality table and survival engine",
-  "description": "The deterministic heart of the demo. A generated, clearly synthetic mortality table for ages 0 to 120 (male and female), and a pure survival engine that turns it into survivor counts. Everything visual is built on this, so it comes first and ships with the full test set from fade/standards/testing.md.",
+  "description": "The deterministic heart of the demo: a generated synthetic mortality table for ages 0 to 120 (male and female) and a pure survival engine. Every story below is fully specified; implement exactly what it says, nothing more. Formula for x >= 1: q(x) = min(1, A + B * exp(C * x)). Male A=0.0002 B=0.00003 C=0.095. Female A=0.0002 B=0.00002 C=0.095. Age 0 is fixed: male 0.004, female 0.0035. Age 120 is fixed at 1 for both.",
   "complexity": "medium",
   "dependsOn": [],
   "priority": 1,
   "userStories": [
     {
       "id": "US-001",
-      "title": "Generate the synthetic mortality table",
-      "description": "tools/generate-table.mjs writes data/mortality.csv with columns age,qx_male,qx_female for ages 0 to 120 using a Gompertz-Makeham curve with fixed constants (no randomness). Female rates are lower than male at every age above 0. q(120) is exactly 1 for both.",
+      "title": "Generate data/mortality.csv",
+      "description": "Create tools/generate-table.mjs. It writes data/mortality.csv (create the data/ folder if missing). Line 1 is exactly: # SYNTHETIC illustrative mortality. Not for real actuarial use. Line 2 is the header: age,qx_male,qx_female. Then one row per age 0..120 with rates printed using toFixed(8). Use the constants from the PRD description. Put the formula and constants in a comment at the top of the file. Use Math.exp only; no Math.random.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "node tools/generate-table.mjs writes data/mortality.csv with a header and exactly 121 data rows",
-        "Running the generator twice produces byte-identical files",
-        "q(0) is between 0.002 and 0.006 (infant mortality bump), q(x) is monotone non-decreasing from age 10 onwards, q(120) = 1",
-        "The CSV begins with a comment line: '# SYNTHETIC illustrative mortality. Not for real actuarial use.' and the loader skips comment lines",
-        "The constants and the formula are documented in a module comment"
+        "node tools/generate-table.mjs exits 0 and data/mortality.csv has exactly 123 lines (comment, header, 121 rows)",
+        "Row for age 0 is 0,0.00400000,0.00350000 and row for age 120 is 120,1.00000000,1.00000000",
+        "Row for age 80 male is 0.06196 to 5 decimal places (0.0002 + 0.00003 * exp(7.6))",
+        "Running the generator twice gives byte-identical output (check with cmp)",
+        "For both sexes q(x) <= q(x+1) for every x from 1 to 119"
       ],
       "priority": 1,
       "passes": false
     },
     {
       "id": "US-002",
-      "title": "Table loader with validation",
-      "description": "src/engine/table.mjs exports parseTable(csvText) returning { male: number[121], female: number[121] } and throws a clear error if any age is missing, duplicated, or any rate is outside [0, 1].",
+      "title": "Table loader src/engine/table.mjs",
+      "description": "Create src/engine/table.mjs exporting parseTable(csvText). Skip lines starting with # and the header line. Return { male: Float64Array or number[] of length 121, female: same } indexed by age. Throw new Error(`Missing age ${x}`) if any age 0..120 is absent, Error(`Duplicate age ${x}`) if repeated, and Error(`Rate out of range at age ${x}`) if any rate is < 0 or > 1. No DOM, no fetch, no fs inside this module; it takes the CSV text as a string.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "parseTable on data/mortality.csv returns two arrays of length 121 indexed by age",
-        "A table missing an age, or with a rate of 1.2, throws an Error whose message names the age",
-        "tests/table.test.mjs covers the happy path and both failure cases and passes under node --test"
+        "tests/table.test.mjs loads data/mortality.csv with fs, calls parseTable, and asserts both arrays have length 121 and male[0] === 0.004",
+        "A CSV with age 50 removed throws an Error whose message contains 'Missing age 50'",
+        "A CSV where age 10 male is 1.2 throws an Error whose message contains 'age 10'",
+        "node --test tests/ passes"
       ],
       "priority": 2,
       "passes": false
     },
     {
       "id": "US-003",
-      "title": "Survival engine",
-      "description": "src/engine/survival.mjs exports survivors(cohort, qx, startAge) returning an array of fractional survivor counts indexed by age from startAge to 121 (the entry for 121 is 0), and applyImprovement(qx, pct) returning a new array with every rate scaled by (1 - pct). Pure functions, no rounding.",
+      "title": "Survival engine src/engine/survival.mjs",
+      "description": "Create src/engine/survival.mjs exporting two pure functions. survivors(cohort, qx, startAge) returns a plain array lx where lx[0] === cohort is the count at startAge, lx[i+1] = lx[i] * (1 - qx[startAge + i]) for ages up to 120, and the final element (for age 121) is 0 because q(120) is 1. Its length is 121 - startAge + 1. No rounding anywhere. applyImprovement(qx, pct) returns a NEW array where every element is (1 - pct) * qx[x]; it throws Error('pct must be between 0 and 0.3') otherwise. Put a comment at the top: terminal age convention, everyone alive at 120 dies in that year.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "survivors(1000000, qx, 0)[0] === 1000000 and the last entry is 0",
-        "Counts never increase with age; zero mortality gives no deaths; q = 1 at age a gives 0 from a + 1 on",
-        "applyImprovement(qx, 0.1) at every age equals 0.9 * qx within 1e-12, and improved survivors are >= baseline at every age",
-        "applyImprovement rejects pct outside [0, 0.3] with an Error",
-        "tests/survival.test.mjs implements items 2 to 7 of fade/standards/testing.md and passes"
+        "survivors(1000000, male, 0)[0] === 1000000, its length is 122, and its last element is 0",
+        "survivors(1000000, male, 60).length === 62",
+        "For every i, lx[i+1] <= lx[i] (never increases)",
+        "survivors(1000, new Array(121).fill(0), 0) is all 1000 except the last element, which is 0 only if q(120) is forced to 1: so test with a copy of the table where q(120)=1 and all other q=0 and assert lx is 1000 up to age 120 and 0 at 121",
+        "With q(30)=1 in a copy of the table, survivors from age 0 is 0 from index 31 onwards",
+        "applyImprovement(male, 0.1)[80] is within 1e-12 of 0.9 * male[80]; survivors with improved rates are >= baseline at every index",
+        "applyImprovement(male, 0.31) and applyImprovement(male, -0.01) both throw",
+        "All of the above live in tests/survival.test.mjs and node --test tests/ passes"
       ],
       "priority": 3,
       "passes": false
     },
     {
       "id": "US-004",
-      "title": "Independent reference check",
-      "description": "tools/reference.py is a standalone Python script that reads data/mortality.csv and prints survivors from a cohort of 1,000,000 at starting age 0 for ages 30, 65, 90 and 110, male and female, and writes them to data/reference.json. It is written from the formula alone, without importing or reading the JS engine. A test compares the JS engine to the JSON.",
+      "title": "Independent reference check tools/reference.py and tests/reference.test.mjs",
+      "description": "Create tools/reference.py (Python 3, standard library only). It reads data/mortality.csv, skips # and header lines, and for each sex computes l(0)=1000000, l(x+1)=l(x)*(1-q(x)) with plain floats. It writes data/reference.json as {\"male\": {\"30\": ..., \"65\": ..., \"90\": ..., \"110\": ...}, \"female\": {...}} with unrounded floats. Do not import or read any JavaScript. Then create tests/reference.test.mjs which reads data/reference.json, runs survivors(1000000, qx, 0) from the JS engine, and asserts Math.abs(js[age] - ref[age]) < 0.5 for all eight values.",
+      "complexity": "simple",
       "acceptanceCriteria": [
-        "python3 tools/reference.py writes data/reference.json with the eight values",
-        "tests/reference.test.mjs reads data/reference.json and asserts the JS engine matches each value to within 0.5",
-        "The test passes. If it does not, fix the engine, not the reference, and record the discrepancy in fade/progress.md"
+        "python3 tools/reference.py exits 0 and data/reference.json has exactly eight numbers",
+        "Male 30 is above 990000 and male 110 is below 1000 (sanity bounds, not exact values)",
+        "tests/reference.test.mjs passes under node --test tests/",
+        "Nothing in data/reference.json or tools/reference.py is edited after the Python script first writes it; if the JS disagrees, fix the JS"
       ],
       "priority": 4,
       "passes": false
     }
   ],
   "technicalNotes": {
-    "model": "sonnet",
-    "rationale": "Small, well-specified numerical code. The tests are the deliverable."
+    "model": "haiku",
+    "rationale": "Every story is specified to the line. Numbers are the deliverable."
   }
 }
