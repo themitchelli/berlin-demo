@@ -106,3 +106,12 @@ For blocked stories, use:
 - Files changed: src/particles.mjs, tests/particles.test.mjs, fade/prds/FEAT-003-particle-field.json (US-002 passes: true), fade/progress.md
 - Tests: added 2 tests (radius shrink to 0.8r at fade 0.5 and 0.6r at fade 0, full radius for living; restore to aliveCount=all sets every particle alive with fade 1 in one update). `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`.
 - Not verified in a browser: the three browser criteria (field thinning between ages 75 and 100 while playing from 60, reset visible within one frame, pause with drift). Headless Chrome does not pump requestAnimationFrame (see learned.md), so these rest on the code path above, not an observed run.
+
+## 2026-11-01 - US-001 (FEAT-004): Slider and second curve - IMPLEMENTED, NOT VERIFIED IN BROWSER
+
+- index.html: range input #improvement (0-30, step 1) with #improvementValue; #legend (hidden by default) with Baseline/Improved swatches.
+- src/app.mjs: state.improved = survivors(COHORT, applyImprovement(table[sex], pct), startAge), recomputed on sex/startAge change and on slider input; render() passes two series when improvement > 0 and shows the legend only then. Colours #7fd1ff (baseline) and #ffb347 (improved). Slider input updates #improvementValue and redraws without touching currentAge.
+- styles.css: .legend and .swatch styles.
+- Files changed: index.html, src/app.mjs, styles.css, fade/progress.md
+- Tests: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. No engine change. Engine check (scratch script, not committed): for male and female at start ages 0/30/60, improved l(x) > baseline l(x) at every age after startAge, with q at 30%. `node --check src/app.mjs` passes.
+- Not verified: the three browser acceptance criteria (single curve and hidden legend at 0; orange above blue at 30; slider while playing leaves #age unchanged). Headless Chrome cannot drive the slider or rAF here (see learned.md). Story left passes: false until someone checks it in a real browser.

@@ -2,7 +2,7 @@
 // The engine is the only source of survivor counts.
 
 import { parseTable } from './engine/table.mjs';
-import { survivors } from './engine/survival.mjs';
+import { survivors, applyImprovement } from './engine/survival.mjs';
 import { drawChart } from './chart.mjs';
 import { createField, update as updateField, visibleCount } from './particles.mjs';
 
@@ -12,11 +12,15 @@ const MIN_START_AGE = 0;
 const MAX_START_AGE = 90;
 const END_AGE = 121; // one past the terminal age 120; survivors here are 0
 const STEP_MS = 250; // time per simulated year while playing
-const CURVE_COLOUR = '#4fc3f7';
+const BASELINE_COLOUR = '#7fd1ff';
+const IMPROVED_COLOUR = '#ffb347';
 
 const els = {
   sex: document.getElementById('sex'),
   startAge: document.getElementById('startAge'),
+  improvement: document.getElementById('improvement'),
+  improvementValue: document.getElementById('improvementValue'),
+  legend: document.getElementById('legend'),
   age: document.getElementById('age'),
   alive: document.getElementById('alive'),
   pct: document.getElementById('pct'),
@@ -41,6 +45,7 @@ const state = {
   currentAge: 0,
   playing: false,
   baseline: [],
+  improved: [],
 };
 
 function readStartAge() {
@@ -55,6 +60,25 @@ function recomputeBaseline() {
   els.startAge.value = String(state.startAge);
   state.currentAge = state.startAge;
   state.baseline = survivors(COHORT, state.table[state.sex], state.startAge);
+  recomputeImproved();
+}
+
+// The improved curve is always the engine's survivors under the current slider value.
+// At 0 it is not drawn, so it is only computed when the slider is above 0.
+function recomputeImproved() {
+  if (state.improvement === 0) {
+    state.improved = [];
+    return;
+  }
+  const qx = applyImprovement(state.table[state.sex], state.improvement);
+  state.improved = survivors(COHORT, qx, state.startAge);
+}
+
+function onImprovementInput() {
+  state.improvement = Number(els.improvement.value) / 100;
+  els.improvementValue.textContent = `${els.improvement.value}%`;
+  recomputeImproved();
+  render();
 }
 
 function survivorsAt(age) {
@@ -66,12 +90,12 @@ function render() {
   els.age.textContent = `Age ${state.currentAge}`;
   els.alive.textContent = Math.round(alive).toLocaleString('en-GB');
   els.pct.textContent = `${((alive / COHORT) * 100).toFixed(1)}%`;
-  drawChart(
-    els.chart,
-    [{ values: state.baseline, colour: CURVE_COLOUR }],
-    state.currentAge,
-    state.startAge,
-  );
+  const series = [{ values: state.baseline, colour: BASELINE_COLOUR }];
+  if (state.improvement > 0) {
+    series.push({ values: state.improved, colour: IMPROVED_COLOUR });
+  }
+  els.legend.hidden = state.improvement === 0;
+  drawChart(els.chart, series, state.currentAge, state.startAge);
 }
 
 // Canvas pixel width follows its CSS width so the chart stays sharp and legible.
@@ -161,6 +185,9 @@ async function init() {
     throw new Error(`Could not load data/mortality.csv (HTTP ${response.status})`);
   }
   state.table = parseTable(await response.text());
+  // Browsers may restore a slider position on reload; the state must follow the control.
+  state.improvement = Number(els.improvement.value) / 100;
+  els.improvementValue.textContent = `${els.improvement.value}%`;
   syncCanvasSize();
   onSettingChange();
   field = createField(els.field, PARTICLES);
@@ -170,6 +197,7 @@ async function init() {
 window.addEventListener('resize', onResize);
 els.sex.addEventListener('change', onSettingChange);
 els.startAge.addEventListener('change', onSettingChange);
+els.improvement.addEventListener('input', onImprovementInput);
 els.play.addEventListener('click', play);
 els.pause.addEventListener('click', pause);
 els.reset.addEventListener('click', reset);
