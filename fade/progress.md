@@ -91,3 +91,11 @@ For blocked stories, use:
 - src/app.mjs: calls drawChart from render() (so every state change and every frame while playing); syncCanvasSize() sets canvas.width from clientWidth on load and on window resize, then redraws.
 - Files changed: src/chart.mjs, src/app.mjs, fade/prds/FEAT-002-page-chart-and-controls.json (US-003 passes: true), fade/progress.md
 - Tests: no engine code changed. `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 23 / ℹ pass 23 / ℹ fail 0`. Headless Chrome screenshot of http://localhost:8091/ (python3 -m http.server): curve starts top left at age 0 and reaches 0 at 121, ticks and labels render, marker at age 0. Marker movement with age was not screenshotted (headless cannot press Play; rAF limitation in learned.md); it uses the same x mapping as the curve.
+
+## 2026-11-01 20:00 - US-001 (FEAT-003): src/particles.mjs with a pure visibleCount helper - COMPLETE
+
+- src/particles.mjs: visibleCount(lx, l0, total=1000) = Math.round(total * lx / l0); createField(canvas, total) builds 1,000 particles (the only Math.random use); update(field, aliveCount, dtMs) keeps exactly aliveCount particles alive, killing from the end of the array, fades dead ones over 400 ms, applies a bounded sine drift, and draws with shadowBlur 8.
+- src/app.mjs: createField once in init(); a fieldFrame rAF loop that runs for the page's life calls update with aliveCount = visibleCount(baseline[currentAge - startAge], 1000000, 1000). Because the loop is independent of play, particles also keep drifting while paused.
+- index.html: added <canvas id="field" width="800" height="300">.
+- Files changed: src/particles.mjs, tests/particles.test.mjs, src/app.mjs, index.html, fade/prds/FEAT-003-particle-field.json (US-001 passes: true), fade/progress.md
+- Tests: added 4 tests in tests/particles.test.mjs (visibleCount's three PRD assertions; update keeps exactly aliveCount alive from the end; 400 ms fade; aliveCount clamped). `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 27 / ℹ pass 27 / ℹ fail 0`. Math.random appears only in createField (grep). Headless Chrome load of http://localhost:8093/: #age "Age 0", #alive "1,000,000", no uncaught errors. Not verified: visual "all visible at 0 / none at 121" and the 50 fps devtools criterion (need a real browser with a rAF-driven session; headless does not pump rAF, see learned.md).

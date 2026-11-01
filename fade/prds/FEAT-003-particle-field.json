@@ -22,7 +22,7 @@
         "One canvas, no DOM element per particle; drawing 1,000 particles per frame without dropping below 50 fps in Chrome devtools"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-002",

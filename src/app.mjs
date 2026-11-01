@@ -4,8 +4,10 @@
 import { parseTable } from './engine/table.mjs';
 import { survivors } from './engine/survival.mjs';
 import { drawChart } from './chart.mjs';
+import { createField, update as updateField, visibleCount } from './particles.mjs';
 
 const COHORT = 1000000;
+const PARTICLES = 1000;
 const MIN_START_AGE = 0;
 const MAX_START_AGE = 90;
 const END_AGE = 121; // one past the terminal age 120; survivors here are 0
@@ -22,8 +24,11 @@ const els = {
   pause: document.getElementById('pause'),
   reset: document.getElementById('reset'),
   chart: document.getElementById('chart'),
+  field: document.getElementById('field'),
 };
 
+let field = null;
+let fieldLastTs = null;
 let rafId = null;
 let lastTs = null;
 let accumulatedMs = 0;
@@ -73,6 +78,19 @@ function render() {
 function syncCanvasSize() {
   const cssWidth = els.chart.clientWidth;
   if (cssWidth > 0 && els.chart.width !== cssWidth) els.chart.width = cssWidth;
+}
+
+// Runs for the life of the page, playing or not. It only draws the engine's current
+// survivor count as particles; it never computes mortality.
+function fieldFrame(ts) {
+  if (fieldLastTs === null) fieldLastTs = ts;
+  const dtMs = ts - fieldLastTs;
+  fieldLastTs = ts;
+  if (field && state.baseline.length > 0) {
+    const aliveCount = visibleCount(survivorsAt(state.currentAge), COHORT, PARTICLES);
+    updateField(field, aliveCount, dtMs);
+  }
+  requestAnimationFrame(fieldFrame);
 }
 
 function onResize() {
@@ -145,6 +163,8 @@ async function init() {
   state.table = parseTable(await response.text());
   syncCanvasSize();
   onSettingChange();
+  field = createField(els.field, PARTICLES);
+  requestAnimationFrame(fieldFrame);
 }
 
 window.addEventListener('resize', onResize);
