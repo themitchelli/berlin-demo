@@ -34,7 +34,7 @@
         "#extra updates every frame while playing"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     }
   ],
   "technicalNotes": {

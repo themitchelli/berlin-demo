@@ -125,3 +125,10 @@ For blocked stories, use:
 - Verified by test: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. `node --check` on src/app.mjs passes.
 - Left for a human (see ENGINEERING_LOG.md, Human checks): Criterion 3 (moving the slider while playing changes the curve without changing #age). Headless Chrome cannot drive a real slider drag or rAF, so this was not observed. The criterion 2 screenshot was produced from a preset value, not a real drag.
 - Files changed: fade/prds/FEAT-004-scenario-comparison.json (US-001 passes: true), ENGINEERING_LOG.md (new), fade/progress.md
+
+## 2026-11-01 - US-002 (FEAT-004): Extra survivors statistic - COMPLETE
+
+- index.html: added #aliveImproved and #extra to the stats panel, both initially '—'. src/app.mjs: render() sets them from state.improved[currentAge - startAge] and the rounded difference (prefixed '+'); both show '—' when improvement is 0. render() already runs every frame while playing, so #extra updates per frame.
+- Files changed: index.html, src/app.mjs, fade/prds/FEAT-004-scenario-comparison.json (US-002 passes: true), ENGINEERING_LOG.md, fade/progress.md
+- Tests: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. `node --check src/app.mjs` passes. Engine check (scratch script in /tmp): male, 10%, age 85 gives improved 403417.19 minus baseline 363826.91, so +39,590; age 0 gives +0.
+- Browser: headless --dump-dom of a scratch copy in /tmp with the slider value set to 10 shows #aliveImproved "1,000,000" and #extra "+0" at age 0. Not verified in a browser: the age-85 displayed value and per-frame updating while playing (headless does not pump rAF, see learned.md). Those are in ENGINEERING_LOG.md under Human checks.

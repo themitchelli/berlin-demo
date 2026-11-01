@@ -24,6 +24,8 @@ const els = {
   age: document.getElementById('age'),
   alive: document.getElementById('alive'),
   pct: document.getElementById('pct'),
+  aliveImproved: document.getElementById('aliveImproved'),
+  extra: document.getElementById('extra'),
   play: document.getElementById('play'),
   pause: document.getElementById('pause'),
   reset: document.getElementById('reset'),
@@ -90,6 +92,15 @@ function render() {
   els.age.textContent = `Age ${state.currentAge}`;
   els.alive.textContent = Math.round(alive).toLocaleString('en-GB');
   els.pct.textContent = `${((alive / COHORT) * 100).toFixed(1)}%`;
+  if (state.improvement > 0) {
+    const improvedAlive = state.improved[state.currentAge - state.startAge];
+    els.aliveImproved.textContent = Math.round(improvedAlive).toLocaleString('en-GB');
+    const diff = Math.round(improvedAlive - alive);
+    els.extra.textContent = `${diff < 0 ? '-' : '+'}${Math.abs(diff).toLocaleString('en-GB')}`;
+  } else {
+    els.aliveImproved.textContent = '—';
+    els.extra.textContent = '—';
+  }
   const series = [{ values: state.baseline, colour: BASELINE_COLOUR }];
   if (state.improvement > 0) {
     series.push({ values: state.improved, colour: IMPROVED_COLOUR });
