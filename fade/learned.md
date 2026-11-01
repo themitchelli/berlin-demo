@@ -32,3 +32,9 @@ Only add learnings that are:
 
 - **What:** `chrome --headless=new --dump-dom` with `--virtual-time-budget` fires a requestAnimationFrame callback once and then stops, so any rAF-driven animation looks frozen. Also, `timeout` is not installed on macOS, so `timeout ... chrome` silently produces no output.
 - **Why it matters:** To check rAF-driven behaviour headlessly, test a scratch copy with `window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16)` injected before the module loads. Keep the polyfill out of the committed code. Run the browser checks with a plain command, not `timeout`.
+
+## 2026-11-01 - Drive button clicks headlessly with an injected script in a scratch copy
+**Source:** PRD-ID FEAT-005 US-002
+
+- **What:** Under `--virtual-time-budget`, timers run, so a scratch copy of index.html with an inline script can call `getElementById('play').click()` after a delay and then record DOM state. `--dump-dom` only returns the final DOM, so accumulate the readings into `document.title` (joined with ` | `) to read every step from the one dump. Use a budget around 20000 ms for a 3-second sequence. A stale `python3 -m http.server` on the same port can serve an old directory, so check `lsof -nP -iTCP:<port>` before trusting a probe.
+- **Why it matters:** Earlier notes say headless cannot press Play. Button clicks and state changes can be checked this way; only rAF-driven motion and visual transitions still need a person.

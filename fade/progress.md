@@ -146,3 +146,15 @@ For blocked stories, use:
   - Caveat: the headless window includes browser chrome, so the page viewport measured 993px tall at the 1920x1080 window and 633px at 1280x720. The layout was checked at these smaller heights, not at exactly 1080 and 720.
   - No http(s) or external stylesheet references in index.html, styles.css, src/app.mjs (only the local styles.css link).
 - Not verified: the visual result on a real projector or a real browser window at exact 1920x1080 / 1280x720 viewports.
+
+## 2026-11-01 17:27 - US-002: Opening title and disclaimer - COMPLETE
+
+- index.html: #title "1,000,000 LIVES" over the field canvas; footer#disclaimer with the required text.
+- styles.css: #title centred over the field, font-size min(clamp(64px, 10vw, 160px), 16cqw), letter-spacing 0.08em, opacity transition 600 ms; .field is a size container. #disclaimer fixed at the bottom, 14px, 70% opacity; .stage bottom padding reserves room so the controls do not sit under it.
+- src/app.mjs: play() fades the title out (600 ms, then hidden); reset() un-hides it and fades it back in. Setting changes leave the title as it is.
+- Deviation from the spec: the spec's clamp(64px, 10vw, 160px) alone is wider than the 60% field at 1280x720 (title ran into the stats panel) and at 1920x1080 (clipped). The 16cqw cap keeps it inside the field; at 1920 the spec size is unchanged, at 1280 it is about 118 px.
+- Files changed: index.html, styles.css, src/app.mjs, fade/prds/FEAT-005-cinematic-polish-and-readme.json (US-002 passes: true), fade/progress.md
+- Tests: `node --check src/app.mjs` passes; `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. No engine change.
+- Verified by screenshot (headless Chrome, python3 -m http.server, 1920x1080 and 1280x720 windows): title visible on load and inside the field; disclaimer visible at both sizes; no overlap with stats, chart or controls.
+- Verified by script (scratch copy in /tmp, not committed; Play and Reset clicked by an injected script under --virtual-time-budget): title state at load visible; 1 s after Play hidden=true with class fading; after Reset hidden=false with class cleared.
+- Not verified by eye: the fade itself (opacity over 600 ms) and the title's look on a projector. Headless capture cannot show a transition in progress.

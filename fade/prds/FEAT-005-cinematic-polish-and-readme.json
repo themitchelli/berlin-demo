@@ -35,7 +35,7 @@
         "The disclaimer is visible at 1920x1080 and 1280x720"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-003",

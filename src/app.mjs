@@ -31,9 +31,13 @@ const els = {
   reset: document.getElementById('reset'),
   chart: document.getElementById('chart'),
   field: document.getElementById('field'),
+  title: document.getElementById('title'),
 };
 
+const TITLE_FADE_MS = 600; // matches the #title opacity transition in styles.css
+
 let field = null;
+let titleTimer = null;
 let fieldLastTs = null;
 let rafId = null;
 let lastTs = null;
@@ -172,10 +176,31 @@ function tick() {
   if (state.playing) rafId = requestAnimationFrame(tick);
 }
 
+// The title fades out over TITLE_FADE_MS, then leaves the layout entirely.
+function hideTitle() {
+  clearTimeout(titleTimer);
+  els.title.classList.add('fading');
+  titleTimer = setTimeout(() => {
+    els.title.hidden = true;
+    titleTimer = null;
+  }, TITLE_FADE_MS);
+}
+
+// Shows the title again: un-hide, force a layout so the fade-in starts from opacity 0.
+function showTitle() {
+  clearTimeout(titleTimer);
+  titleTimer = null;
+  els.title.hidden = false;
+  els.title.classList.add('fading');
+  void els.title.offsetWidth;
+  els.title.classList.remove('fading');
+}
+
 function play() {
   if (state.playing || state.baseline.length === 0) return;
   if (state.currentAge >= END_AGE) state.currentAge = state.startAge;
   state.playing = true;
+  hideTitle();
   lastTs = null;
   accumulatedMs = 0;
   rafId = requestAnimationFrame(tick);
@@ -187,6 +212,7 @@ function pause() {
 
 function reset() {
   stopPlaying();
+  showTitle();
   state.currentAge = state.startAge;
   render();
 }
