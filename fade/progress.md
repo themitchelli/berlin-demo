@@ -36,3 +36,9 @@ For blocked stories, use:
 - Generator tools/generate-table.mjs already matched the corrected PRD (age-80 male expected 0.06015; formula gives 0.06014588). Verified without changes to code or data.
 - Files changed: fade/prds/FEAT-001-mortality-table-and-engine.json (US-001 passes: true), fade/progress.md
 - Tests: all five acceptance criteria checked by hand: 123 lines; age 0 row 0.00400000/0.00350000; age 120 row 1.00000000/1.00000000; age 80 male 0.06014588; two runs byte-identical (cmp); q(x) <= q(x+1) for x=1..119 for both sexes (0 violations). No automated test file exists yet for this story (node --test tests/ is US-002's scope).
+
+## 2026-11-01 17:13 - US-002: Table loader src/engine/table.mjs - COMPLETE
+
+- Implemented parseTable(csvText) as a pure module: skips # comment lines and the header, returns { male, female } as Float64Array(121). Throws `Missing age N`, `Duplicate age N`, `Rate out of range at age N` per the PRD. No DOM, fetch or fs in src/engine/.
+- Files changed: src/engine/table.mjs, tests/table.test.mjs, fade/prds/FEAT-001-mortality-table-and-engine.json (US-002 passes: true), fade/progress.md, fade/learned.md
+- Tests: added 5 tests in tests/table.test.mjs (real CSV loads with length 121 and male[0]=0.004; Missing age 50; age 10 male 1.2 rejected; duplicate row; negative rate). Ran `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 5 / ℹ pass 5 / ℹ fail 0`. `node --test tests/` as written in FADE.md errors on Node 21+ (see learned.md).

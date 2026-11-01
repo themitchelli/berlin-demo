@@ -20,3 +20,9 @@ Only add learnings that are:
 -->
 
 ---
+
+## 2026-11-01 - `node --test tests/` fails on Node 21+
+**Source:** PRD-ID FEAT-001 US-002
+
+- **What:** On Node 21 and later, `node --test <dir>` is treated as a file path and fails with MODULE_NOT_FOUND. The runner takes glob patterns. On Node 20 the directory form works.
+- **Why it matters:** Run `node --test tests/*.test.mjs` on Node 21+. Do not mark a story passing on the basis of the directory form failing silently.
