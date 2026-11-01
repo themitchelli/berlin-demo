@@ -1,0 +1,41 @@
+{
+  "type": "feature",
+  "project": "Million Lives",
+  "id": "FEAT-003",
+  "name": "The million lives particle field",
+  "description": "About 1,000 particles, each standing for 1,000 lives, drift gently in a field. As the cohort ages, particles fade out so that the visible count always equals round(1000 * lx / l0) from the engine. The field is a picture of the engine's numbers and must not calculate anything.",
+  "complexity": "medium",
+  "dependsOn": ["FEAT-002"],
+  "priority": 3,
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Particle field driven by survivor counts",
+      "description": "src/particles.mjs exports createField(canvas, count) and update(field, aliveCount, dt). Particles have fixed positions and a slow drift; the field keeps exactly aliveCount particles visible, fading the others out over about 400 ms in a fixed order so the same age always shows the same picture.",
+      "acceptanceCriteria": [
+        "At age 0, 1,000 particles are visible; at 121, none",
+        "The number of visible particles at every age equals round(1000 * lx / l0) from the engine (export a pure visibleCount(lx, l0) helper and test it in tests/particles.test.mjs)",
+        "Math.random is used only for initial positions and drift, never for which or how many particles are alive",
+        "The animation holds 60 fps on a 2020 laptop with 1,000 particles (use a single canvas, no DOM per particle)"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Deaths fade, survivors drift",
+      "description": "A particle that dies fades and shrinks over 400 ms. Living particles drift slowly with a subtle glow. Reset restores every particle instantly.",
+      "acceptanceCriteria": [
+        "Playing from age 60 shows a visibly accelerating thinning of the field between ages 75 and 100",
+        "Reset shows all 1,000 particles within one frame",
+        "Pause freezes deaths but drift continues"
+      ],
+      "priority": 2,
+      "passes": false
+    }
+  ],
+  "technicalNotes": {
+    "model": "sonnet",
+    "rationale": "Canvas animation with one pure, testable helper."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "type": "feature",
+  "project": "Million Lives",
+  "id": "FEAT-004",
+  "name": "Mortality improvement scenario",
+  "description": "A slider from 0% to 30% applies a relative reduction to every annual mortality rate. The chart shows baseline and improved curves together and the statistics show the extra survivors at the current age. Changes take effect at once, mid-play.",
+  "complexity": "simple",
+  "dependsOn": ["FEAT-002"],
+  "priority": 4,
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Improvement slider and second curve",
+      "description": "A range input labelled 'Mortality improvement' (0 to 30, step 1, default 0) recomputes the improved survivor array using applyImprovement and draws it on the chart in a second, clearly different colour with a legend.",
+      "acceptanceCriteria": [
+        "At 0% the two curves coincide and only one is visibly drawn",
+        "At 30% the improved curve sits above the baseline at every age between the start and 120",
+        "Moving the slider while playing updates the curve on the next frame without resetting the age"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Extra survivors statistic",
+      "description": "The statistics panel shows the improved surviving population and the difference from baseline at the current age, formatted with thousands separators and a plus sign.",
+      "acceptanceCriteria": [
+        "At age 0 the difference is '+0'",
+        "At age 85, 10% improvement, male, the difference equals improved[85] - baseline[85] from the engine, rounded",
+        "The difference updates every frame while playing"
+      ],
+      "priority": 2,
+      "passes": false
+    }
+  ],
+  "technicalNotes": {
+    "model": "haiku",
+    "rationale": "Wiring an existing engine function to a slider and the existing chart."
+  }
+}

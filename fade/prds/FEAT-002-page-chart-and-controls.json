@@ -1,0 +1,52 @@
+{
+  "type": "feature",
+  "project": "Million Lives",
+  "id": "FEAT-002",
+  "name": "Page shell, survival chart and controls",
+  "description": "A static page that loads the table, runs the engine once, and plays the cohort forward year by year with a survival curve and live statistics. No particles yet. End-to-end working before anything pretty.",
+  "complexity": "medium",
+  "dependsOn": ["FEAT-001"],
+  "priority": 2,
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Page loads the table and shows starting statistics",
+      "description": "index.html plus src/app.mjs fetch data/mortality.csv, parse it, and show: current age, surviving population (formatted with thousands separators), and percentage surviving, for a cohort of 1,000,000 at the chosen starting age.",
+      "acceptanceCriteria": [
+        "Opening http://localhost:8080/ shows 'Age 0', '1,000,000' and '100.0%' with no console errors",
+        "A starting-age control (0 to 90, default 0) and a sex toggle (male/female, default male) change the figures immediately without playing",
+        "All script and style files are local; nothing is fetched from the network"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Play, pause, reset",
+      "description": "Play advances the current age by one year every 250 ms using requestAnimationFrame and elapsed time (not setInterval), pause stops it, reset returns to the starting age. Reaching 121 stops automatically.",
+      "acceptanceCriteria": [
+        "Play from age 0 reaches age 121 in roughly 30 seconds and stops with 0 survivors shown",
+        "Pause freezes the age and figures; Play resumes from the same age; Reset returns to the starting age and 1,000,000",
+        "Changing starting age or sex while playing resets to the new starting age"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Survival curve on canvas",
+      "description": "src/chart.mjs draws lx against age on a canvas: axes with labelled ticks (age every 20 years, survivors every 200,000), the baseline curve, and a vertical marker plus a dot at the current age that moves as the simulation plays.",
+      "acceptanceCriteria": [
+        "The curve starts at the cohort size at the starting age and reaches 0 at 121",
+        "The marker's x position matches the current age shown in the statistics",
+        "The chart redraws correctly when the window is resized"
+      ],
+      "priority": 3,
+      "passes": false
+    }
+  ],
+  "technicalNotes": {
+    "model": "sonnet",
+    "rationale": "Straightforward DOM and canvas work on top of a tested engine."
+  }
+}

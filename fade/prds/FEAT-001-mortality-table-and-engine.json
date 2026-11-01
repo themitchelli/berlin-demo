@@ -1,0 +1,68 @@
+{
+  "type": "feature",
+  "project": "Million Lives",
+  "id": "FEAT-001",
+  "name": "Synthetic mortality table and survival engine",
+  "description": "The deterministic heart of the demo. A generated, clearly synthetic mortality table for ages 0 to 120 (male and female), and a pure survival engine that turns it into survivor counts. Everything visual is built on this, so it comes first and ships with the full test set from fade/standards/testing.md.",
+  "complexity": "medium",
+  "dependsOn": [],
+  "priority": 1,
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Generate the synthetic mortality table",
+      "description": "tools/generate-table.mjs writes data/mortality.csv with columns age,qx_male,qx_female for ages 0 to 120 using a Gompertz-Makeham curve with fixed constants (no randomness). Female rates are lower than male at every age above 0. q(120) is exactly 1 for both.",
+      "acceptanceCriteria": [
+        "node tools/generate-table.mjs writes data/mortality.csv with a header and exactly 121 data rows",
+        "Running the generator twice produces byte-identical files",
+        "q(0) is between 0.002 and 0.006 (infant mortality bump), q(x) is monotone non-decreasing from age 10 onwards, q(120) = 1",
+        "The CSV begins with a comment line: '# SYNTHETIC illustrative mortality. Not for real actuarial use.' and the loader skips comment lines",
+        "The constants and the formula are documented in a module comment"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Table loader with validation",
+      "description": "src/engine/table.mjs exports parseTable(csvText) returning { male: number[121], female: number[121] } and throws a clear error if any age is missing, duplicated, or any rate is outside [0, 1].",
+      "acceptanceCriteria": [
+        "parseTable on data/mortality.csv returns two arrays of length 121 indexed by age",
+        "A table missing an age, or with a rate of 1.2, throws an Error whose message names the age",
+        "tests/table.test.mjs covers the happy path and both failure cases and passes under node --test"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Survival engine",
+      "description": "src/engine/survival.mjs exports survivors(cohort, qx, startAge) returning an array of fractional survivor counts indexed by age from startAge to 121 (the entry for 121 is 0), and applyImprovement(qx, pct) returning a new array with every rate scaled by (1 - pct). Pure functions, no rounding.",
+      "acceptanceCriteria": [
+        "survivors(1000000, qx, 0)[0] === 1000000 and the last entry is 0",
+        "Counts never increase with age; zero mortality gives no deaths; q = 1 at age a gives 0 from a + 1 on",
+        "applyImprovement(qx, 0.1) at every age equals 0.9 * qx within 1e-12, and improved survivors are >= baseline at every age",
+        "applyImprovement rejects pct outside [0, 0.3] with an Error",
+        "tests/survival.test.mjs implements items 2 to 7 of fade/standards/testing.md and passes"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Independent reference check",
+      "description": "tools/reference.py is a standalone Python script that reads data/mortality.csv and prints survivors from a cohort of 1,000,000 at starting age 0 for ages 30, 65, 90 and 110, male and female, and writes them to data/reference.json. It is written from the formula alone, without importing or reading the JS engine. A test compares the JS engine to the JSON.",
+      "acceptanceCriteria": [
+        "python3 tools/reference.py writes data/reference.json with the eight values",
+        "tests/reference.test.mjs reads data/reference.json and asserts the JS engine matches each value to within 0.5",
+        "The test passes. If it does not, fix the engine, not the reference, and record the discrepancy in fade/progress.md"
+      ],
+      "priority": 4,
+      "passes": false
+    }
+  ],
+  "technicalNotes": {
+    "model": "sonnet",
+    "rationale": "Small, well-specified numerical code. The tests are the deliverable."
+  }
+}

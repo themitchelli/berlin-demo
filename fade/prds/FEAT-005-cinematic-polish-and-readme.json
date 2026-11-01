@@ -1,0 +1,52 @@
+{
+  "type": "feature",
+  "project": "Million Lives",
+  "id": "FEAT-005",
+  "name": "Cinematic presentation and README",
+  "description": "It is projected on a large screen. Dark theme, large type, an opening title, a visible synthetic-data disclaimer, and a README that lets anyone run it in one minute. Polish is last and must not touch the engine.",
+  "complexity": "simple",
+  "dependsOn": ["FEAT-003", "FEAT-004"],
+  "priority": 5,
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Dark cinematic layout",
+      "description": "Full-viewport dark background, the particle field as the hero, the chart and statistics panel beside or below it, statistics in very large type readable from the back of a room, controls grouped and labelled. Baseline and improved use two restrained, distinct colours.",
+      "acceptanceCriteria": [
+        "At 1920x1080 the age and surviving-population figures are at least 64px tall and the layout has no scrollbars",
+        "At 1280x720 nothing overlaps and the controls remain usable",
+        "No external fonts or stylesheets; system font stack only"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Opening title and disclaimer",
+      "description": "Before the first Play the page shows '1,000,000 LIVES' as a large title over the full particle field; it fades out on Play. A footer line reads 'Synthetic mortality assumptions for illustration only. Not for real actuarial use.' and is always visible.",
+      "acceptanceCriteria": [
+        "The title is visible on load and gone within 1 second of pressing Play",
+        "Reset brings the title back",
+        "The disclaimer is visible at both tested resolutions"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "README and engineering log",
+      "description": "README.md explains what the app is, the formula, the terminal-age convention, how to run it (serve command, test command, regenerate table), and the disclaimer. ENGINEERING_LOG.md lists the decisions made and any known limitations.",
+      "acceptanceCriteria": [
+        "A new reader can run the app and the tests from README alone",
+        "README states that the particle field is a display of the engine's numbers and introduces no randomness into the calculation",
+        "ENGINEERING_LOG.md has at least one entry per PRD with the decision taken and the test result"
+      ],
+      "priority": 3,
+      "passes": false
+    }
+  ],
+  "technicalNotes": {
+    "model": "haiku",
+    "rationale": "CSS, copy and documentation. No logic."
+  }
+}
