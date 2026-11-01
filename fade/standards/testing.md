@@ -1,6 +1,6 @@
 # Testing standard
 
-- Tests run with `node --test tests/`. No other runner.
+- Tests run with `node --test`. No other runner.
 - The engine (`src/engine/`) must have tests for:
   1. Every q(x) in the table is between 0 and 1 inclusive, and q(120) = 1.
   2. Survivor counts never increase with age.

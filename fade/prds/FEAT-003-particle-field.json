@@ -16,7 +16,7 @@
       "description": "Create src/particles.mjs exporting: visibleCount(lx, l0, total=1000) which returns Math.round(total * lx / l0) (pure, no DOM); createField(canvas, total=1000) which makes an array of particles { x, y, r, phase, alive:true, fade:1 } with positions from Math.random spread across the canvas and r between 1.5 and 3; and update(field, aliveCount, dtMs) which marks particles dead in a FIXED order (index ascending from the end of the array) so that exactly aliveCount remain alive, reduces fade towards 0 over 400 ms for dead ones, drifts every particle by a tiny sine-based offset using phase and dt, and draws them (alpha = fade, with a soft glow using shadowBlur 8). Add <canvas id=field> to index.html and call createField once and update every frame from app.mjs with aliveCount = visibleCount(baseline[currentAge - startAge], 1000000).",
       "complexity": "simple",
       "acceptanceCriteria": [
-        "tests/particles.test.mjs asserts visibleCount(1000000,1000000) === 1000, visibleCount(0,1000000) === 0, visibleCount(500500,1000000) === 501, and passes under node --test tests/",
+        "tests/particles.test.mjs asserts visibleCount(1000000,1000000) === 1000, visibleCount(0,1000000) === 0, visibleCount(500500,1000000) === 501, and passes under node --test",
         "In the browser at age 0 all particles are visible; at 121 none",
         "Math.random appears only in createField; update and visibleCount use none",
         "One canvas, no DOM element per particle; drawing 1,000 particles per frame without dropping below 50 fps in Chrome devtools"

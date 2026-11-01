@@ -40,7 +40,7 @@
     {
       "id": "US-003",
       "title": "README.md and ENGINEERING_LOG.md",
-      "description": "Write README.md with these headings in this order: What this is; The maths (the l(x+1) formula, the improvement formula, the terminal-age convention); Run it (python3 -m http.server 8080, then the URL); Test it (node --test tests/); Regenerate the table (node tools/generate-table.mjs, then python3 tools/reference.py); Disclaimer. State in What this is that the particle field is a display of the engine's numbers and introduces no randomness into the calculation. Write ENGINEERING_LOG.md with one entry per PRD FEAT-001 to FEAT-005: date, decisions taken, test command and result, known limitations.",
+      "description": "Write README.md with these headings in this order: What this is; The maths (the l(x+1) formula, the improvement formula, the terminal-age convention); Run it (python3 -m http.server 8080, then the URL); Test it (node --test); Regenerate the table (node tools/generate-table.mjs, then python3 tools/reference.py); Disclaimer. State in What this is that the particle field is a display of the engine's numbers and introduces no randomness into the calculation. Write ENGINEERING_LOG.md with one entry per PRD FEAT-001 to FEAT-005: date, decisions taken, test command and result, known limitations.",
       "complexity": "simple",
       "acceptanceCriteria": [
         "A new reader can run the app and the tests from README alone",
