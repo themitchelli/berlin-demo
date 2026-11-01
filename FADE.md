@@ -83,6 +83,14 @@ Formula: `l(x+1) = l(x) * (1 - q(x))`. Improvement: `qImproved(x) = (1 - pct) * 
 Allowed: create and edit files anywhere except the off-limits paths; run `node --test`; run `node tools/generate-table.mjs`; commit on the current branch.
 Never: add npm dependencies; add a build step; push; edit `.env`; mark a story `passes: true` without running its tests.
 
+## Browser criteria: how to verify them
+
+Some acceptance criteria describe what a person sees in a browser. Do this:
+
+1. Verify everything you can without a browser: `node --test`, `node --check` on each module, and a scratch script that calls the engine or the pure helpers.
+2. Take a screenshot with headless Chrome and look at it: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --window-size=1920,1080 --virtual-time-budget=4000 --screenshot=/tmp/shot.png http://localhost:8080/` (start `python3 -m http.server 8080` first). The screenshot tells you about layout, text and the first frame.
+3. Criteria you still cannot verify (clicks, sliders, animation over time) go under a heading `## Human checks` in `ENGINEERING_LOG.md`, one line each, with the story id. Then mark the story `passes: true`. Write in `fade/progress.md` exactly which criteria were verified by test, which by screenshot, and which were left for a human. Never say a human check has been done.
+
 ## Development Environment
 
 - Run tests: `node --test`
