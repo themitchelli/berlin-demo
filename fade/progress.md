@@ -64,3 +64,13 @@ For blocked stories, use:
 - Sanity bounds: male 30 = 985423.99 (> 980000); male 110 = 0.068 (< 1000). Eight numbers present.
 - Files changed: fade/prds/FEAT-001-mortality-table-and-engine.json (US-004 passes: true), fade/progress.md
 - Tests: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 23 / ℹ pass 23 / ℹ fail 0`. All eight reference comparisons pass under tolerance 0.5.
+
+## 2026-11-01 - US-001 (FEAT-002): index.html and src/app.mjs show the starting figures - COMPLETE
+
+- index.html with the controls, #age/#alive/#pct, and canvas#chart (800x400); styles.css minimal dark layout (FEAT-005 owns the cinematic styling). src/app.mjs holds one state object, fetches data/mortality.csv, runs parseTable, computes baseline = survivors(1000000, table[sex], startAge), and renders the three figures. startAge is clamped to 0..90 and truncated to an integer.
+- Files changed: index.html, styles.css, src/app.mjs, fade/prds/FEAT-002-page-chart-and-controls.json (US-001 passes: true), fade/progress.md
+- Tests: no engine code added, so no new node test file. Verified in headless Chrome (Google Chrome, macOS) against `python3 -m http.server 8080`:
+  - `chrome --headless=new --dump-dom http://localhost:8080/`: #age "Age 0", #alive "1,000,000", #pct "100.0%". Console: no page errors (only macOS CVDisplayLink GPU noise).
+  - DevTools driver (/tmp, not committed): male start 60 -> "Age 60", "1,000,000", "100.0%"; female start 60 -> same; male start 95 -> clamped to "Age 90". No console or exception errors.
+  - `grep -n "http://\|https://" index.html src/app.mjs styles.css`: no matches.
+  - `node --test tests/*.test.mjs`: `ℹ tests 23 / ℹ pass 23 / ℹ fail 0` (existing engine tests; no engine change).

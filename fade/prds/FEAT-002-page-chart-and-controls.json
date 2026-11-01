@@ -21,7 +21,7 @@
         "View source shows no http:// or https:// URLs"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-002",

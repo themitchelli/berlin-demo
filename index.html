@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Million Lives Experiment</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>The Million Lives Experiment</h1>
+
+    <section class="controls">
+      <label>Sex
+        <select id="sex">
+          <option value="male" selected>male</option>
+          <option value="female">female</option>
+        </select>
+      </label>
+      <label>Starting age
+        <input type="number" id="startAge" min="0" max="90" value="0">
+      </label>
+      <button id="play" type="button">Play</button>
+      <button id="pause" type="button">Pause</button>
+      <button id="reset" type="button">Reset</button>
+    </section>
+
+    <section class="stats">
+      <div id="age">Age 0</div>
+      <div id="alive">1,000,000</div>
+      <div id="pct">100.0%</div>
+    </section>
+
+    <canvas id="chart" width="800" height="400"></canvas>
+  </main>
+  <script type="module" src="src/app.mjs"></script>
+</body>
+</html>
