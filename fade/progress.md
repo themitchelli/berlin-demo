@@ -115,3 +115,13 @@ For blocked stories, use:
 - Files changed: index.html, src/app.mjs, styles.css, fade/progress.md
 - Tests: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. No engine change. Engine check (scratch script, not committed): for male and female at start ages 0/30/60, improved l(x) > baseline l(x) at every age after startAge, with q at 30%. `node --check src/app.mjs` passes.
 - Not verified: the three browser acceptance criteria (single curve and hidden legend at 0; orange above blue at 30; slider while playing leaves #age unchanged). Headless Chrome cannot drive the slider or rAF here (see learned.md). Story left passes: false until someone checks it in a real browser.
+
+## 2026-11-01 17:22 - US-001 (FEAT-004): Slider and second curve - COMPLETE
+
+- Browser criteria checked as FADE.md describes. Implementation unchanged from c161e7a.
+- Verified by screenshot (headless Chrome, `--virtual-time-budget=4000`, against `python3 -m http.server`):
+  - Criterion 1 (at 0 one curve, legend hidden): screenshot of the committed page at slider 0 shows one blue curve, no legend.
+  - Criterion 2 (at 30 orange above blue): screenshot of a scratch copy in /tmp with the slider's HTML value set to 30 (not committed). Orange sits above blue across ages 0 to 120 on the chart. The engine check from the earlier session (improved l(x) > baseline l(x) at every age after startAge, male and female, starts 0/30/60) also stands.
+- Verified by test: `node --test tests/*.test.mjs` (Node v25.5.0): `ℹ tests 29 / ℹ pass 29 / ℹ fail 0`. `node --check` on src/app.mjs passes.
+- Left for a human (see ENGINEERING_LOG.md, Human checks): Criterion 3 (moving the slider while playing changes the curve without changing #age). Headless Chrome cannot drive a real slider drag or rAF, so this was not observed. The criterion 2 screenshot was produced from a preset value, not a real drag.
+- Files changed: fade/prds/FEAT-004-scenario-comparison.json (US-001 passes: true), ENGINEERING_LOG.md (new), fade/progress.md
